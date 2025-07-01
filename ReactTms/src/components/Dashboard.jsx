@@ -1,10 +1,19 @@
 import React from 'react';
 import StatCard from './StatusCard/Index';
+//import { createTask, getTasks } from '../services/taskService';
 
 export const Dashboard = () => {
+// const handleCreate = async (task) => {
+//   try {
+//     await createTask(task); // 👉 This sends task to backend
+//     //await loadTasks();      // 👉 This refreshes the UI
+//   } catch (err) {
+//     console.error("Task creation failed", err);
+//   }
+// };
+
   return (
     <div className="space-y-8">
-      {/* Search + Add Task Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-center bg-white p-6 rounded-xl shadow gap-4">
         <input
           type="text"
@@ -15,8 +24,6 @@ export const Dashboard = () => {
           ➕ Add Task
         </button>
       </div>
-
-      {/* Task Overview Cards */}
       <div className="bg-white p-6 rounded-xl shadow-lg">
         <h2 className="text-2xl font-extrabold text-gray-800 mb-6">Task Overview</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

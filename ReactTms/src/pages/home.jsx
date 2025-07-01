@@ -4,6 +4,7 @@ import Dashboard from '../components/Dashboard';
 import RecentTask from '../components/Tasks/RecentTask';
 import TaskbyStatus from '../components/Tasks/TaskbyStatus';
 import TopNav from '../components/TopNav/TopNav';
+import TaskList from '../components/Tasks/TaskList';
 
 const user = {
   name: 'Ananta Khanal',
