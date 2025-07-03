@@ -1,66 +1,63 @@
 import React, { useState } from 'react';
-import { createTask } from '../../services/taskService';
+import { createTask, updateTask } from '../../services/taskService';
 
-const TaskForm = ({ onClose,onTaskAdded }) => {
+const TaskForm = ({ onClose, onTaskAdded, taskToEdit }) => {
   const [task, setTask] = useState({
-    title: '',
-    description: '',
-    assignedTo: '',
-    dueDate: '',
-    isCompleted: false,
+    title: taskToEdit?.title || '',
+    description: taskToEdit?.description || '',
+    assignedTo: taskToEdit?.assignedTo || '',
+    dueDate: taskToEdit?.dueDate ? taskToEdit.dueDate.split('T')[0] : '',
+    isCompleted: taskToEdit?.isCompleted || false,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setTask((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle checkbox
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
     setTask((prev) => ({ ...prev, [name]: checked }));
   };
 
-  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    const newTask = {
+    const formattedTask = {
       ...task,
       dueDate: task.dueDate ? new Date(task.dueDate) : null,
     };
 
     try {
-      await createTask(newTask);
-      //reload table 
-       if (onTaskAdded) onTaskAdded(); 
-  
-      // Reset form
-      setTask({
-        title: '',
-        description: '',
-        assignedTo: '',
-        dueDate: '',
-        isCompleted: false,
-      });
-
-      onClose(); 
+      if (taskToEdit)
+     {
+        formattedTask.id = taskToEdit.id
+        await updateTask(taskToEdit.id, formattedTask);
+      } else
+       {
+        await createTask(formattedTask);
+      }
+      if (onTaskAdded) onTaskAdded();
+      onClose();
     } catch (error) {
-      console.error('Error creating task:', error);
-      alert('Failed to create task');
+      console.error('Error saving task:', error);
+      alert('Failed to save task');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow space-y-3">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white p-4 rounded shadow space-y-3"
+    >
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-semibold">Add New Task</h2>
+        <h2 className="text-xl font-semibold">
+          {taskToEdit ? 'Edit Task' : 'Add New Task'}
+        </h2>
         <button
           type="button"
           onClick={onClose}
@@ -125,7 +122,11 @@ const TaskForm = ({ onClose,onTaskAdded }) => {
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         disabled={isSubmitting}
       >
-        {isSubmitting ? 'Submitting...' : 'Submit'}
+        {isSubmitting
+          ? 'Submitting...'
+          : taskToEdit
+            ? 'Update Task'
+            : 'Create Task'}
       </button>
     </form>
   );

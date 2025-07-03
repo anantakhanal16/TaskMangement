@@ -14,16 +14,23 @@ const user = {
 const Home = () => {
   const [showForm, setShowForm] = useState(false);
   const [reloadTasks, setReloadTasks] = useState(false);
+  const [editTask, setEditTask] = useState(null);
+
   const handleAddTaskClick = () => {
+    setEditTask(null);
     setShowForm(true);
   };
   const handleTaskAdded = () => {
     setShowForm(false);
-    setReloadTasks(prev => !prev); // toggle to trigger useEffect in RecentTask
+    setReloadTasks(prev => !prev);
   };
   const handleCloseForm = () => {
     setShowForm(false);
   };
+  const handleEditTasksClick = (task) => {
+    setEditTask(task);
+    setShowForm(true);
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-200">
@@ -32,9 +39,15 @@ const Home = () => {
         <TopNav user={user} />
 
         <div className="p-6 space-y-8">
-          {showForm && <TaskForm onClose={handleCloseForm} onTaskAdded={handleTaskAdded} />}
+          {showForm && (
+            <TaskForm
+              onClose={handleCloseForm}
+              onTaskAdded={handleTaskAdded}
+              taskToEdit={editTask}
+            />
+          )}
           <Dashboard onAddTaskClick={handleAddTaskClick} />
-          <RecentTask reloadTrigger={reloadTasks} />
+          <RecentTask reloadTrigger={reloadTasks} onEdit={handleEditTasksClick} />
           <TaskbyStatus />
         </div>
       </main>
