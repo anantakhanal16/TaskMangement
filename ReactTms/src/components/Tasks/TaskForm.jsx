@@ -1,49 +1,134 @@
 import React, { useState } from 'react';
+import { createTask } from '../../services/taskService';
 
-const TaskForm = () => {
+const TaskForm = ({ onClose,onTaskAdded }) => {
+  const [task, setTask] = useState({
+    title: '',
+    description: '',
+    assignedTo: '',
+    dueDate: '',
+    isCompleted: false,
+  });
 
-  const [title, setTitle] = useState('')
-   const [status, setStatus] = useState('Todo');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-   const handleSubmit = (e) => {
+  
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setTask((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle checkbox
+  const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    setTask((prev) => ({ ...prev, [name]: checked }));
+  };
+
+  // Submit form
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    // const newTask = {
-    //   title,
-    //   status,
-    // //      onCreate(newTask); 
-    // //       setTitle('');
-    // // setStatus('Todo')
-    // };
-  }
+    const newTask = {
+      ...task,
+      dueDate: task.dueDate ? new Date(task.dueDate) : null,
+    };
+
+    try {
+      await createTask(newTask);
+      //reload table 
+       if (onTaskAdded) onTaskAdded(); 
+  
+      // Reset form
+      setTask({
+        title: '',
+        description: '',
+        assignedTo: '',
+        dueDate: '',
+        isCompleted: false,
+      });
+
+      onClose(); 
+    } catch (error) {
+      console.error('Error creating task:', error);
+      alert('Failed to create task');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow">
-      <h2 className="text-lg font-semibold mb-2">Add Task</h2>
+    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow space-y-3">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold">Add New Task</h2>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-red-500 font-semibold hover:underline"
+        >
+          ✖ Close
+        </button>
+      </div>
 
       <input
         type="text"
-        placeholder="Enter task title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        name="title"
+        value={task.title}
+        onChange={handleInputChange}
+        placeholder="Task Title"
         required
-        className="mb-2 p-2 w-full border rounded" />
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        className="mb-2 p-2 w-full border rounded"
->
-        <option value="Todo">Todo</option>
-        <option value="InProgress">In Progress</option>
-        <option value="Done">Done</option>
-      </select>
+        className="w-full p-2 border rounded"
+        disabled={isSubmitting}
+      />
+
+      <textarea
+        name="description"
+        value={task.description}
+        onChange={handleInputChange}
+        placeholder="Description"
+        className="w-full p-2 border rounded"
+        disabled={isSubmitting}
+      />
+
+      <input
+        type="text"
+        name="assignedTo"
+        value={task.assignedTo}
+        onChange={handleInputChange}
+        placeholder="Assign To (e.g. user@example.com)"
+        className="w-full p-2 border rounded"
+        disabled={isSubmitting}
+      />
+
+      <input
+        type="date"
+        name="dueDate"
+        value={task.dueDate}
+        onChange={handleInputChange}
+        className="w-full p-2 border rounded"
+        disabled={isSubmitting}
+      />
+
+      <label className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          name="isCompleted"
+          checked={task.isCompleted}
+          onChange={handleCheckboxChange}
+          disabled={isSubmitting}
+        />
+        <span>Mark as Completed</span>
+      </label>
 
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      ></button>
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Submitting...' : 'Submit'}
+      </button>
     </form>
-  )
-}
+  );
+};
 
-export default TaskForm
+export default TaskForm;
