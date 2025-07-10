@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { userLogin } from '../../services/authService';
 import { Link, useNavigate } from 'react-router-dom';
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = ({onLogin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -35,7 +35,7 @@ const LoginForm = ({ onLogin }) => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center min-h-screen bg-gray-400">
             <form
                 onSubmit={handleSubmit}
                 className="bg-white p-8 rounded-xl shadow-md w-full max-w-sm"

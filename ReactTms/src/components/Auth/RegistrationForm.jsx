@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { userRegistration } from '../../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const RegistrationForm = () => {
@@ -51,7 +51,7 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-400 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
 
@@ -102,6 +102,14 @@ const RegistrationForm = () => {
           >
             Register
           </button>
+       
+     <p className="mt-4 text-center text-sm">
+                    Already have account?{' '}
+                    <Link to="/Login" className="text-blue-600 hover:underline">
+                        Login
+                    </Link>
+                </p>
+
         </form>
 
         {submitted && (
