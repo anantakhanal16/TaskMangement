@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { userLogin } from '../../services/authService';
-import { useNavigate } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ onLogin }) => {
     const [email, setEmail] = useState('');
@@ -66,10 +66,15 @@ const LoginForm = ({ onLogin }) => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
-                >
+                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200" >
                     Login
                 </button>
+                <p className="mt-4 text-center text-sm">
+                    Don't have an account?{' '}
+                    <Link to="/register" className="text-blue-600 hover:underline">
+                        Register
+                    </Link>
+                </p>
             </form>
         </div>
     );

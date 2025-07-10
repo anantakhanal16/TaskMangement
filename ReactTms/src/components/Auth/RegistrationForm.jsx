@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { userRegistration } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
+
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -6,17 +9,13 @@ const RegistrationForm = () => {
     password: '',
     fullName: '',
   });
-
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
@@ -27,7 +26,7 @@ const RegistrationForm = () => {
     return errs;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const validationErrors = validate();
@@ -36,107 +35,81 @@ const RegistrationForm = () => {
       return;
     }
 
-    console.log('Submitted Data:', formData);
-    setSubmitted(true);
-    setErrors({});
+    try {
+      const response = await userRegistration(formData);
+      if (response.data.success) 
+        {
+        setSubmitted(true);
+        setErrors({});
+       setTimeout(() => navigate('/login'), 1000); 
+      } else {
+        setErrors({ api: response.data.message || 'Registration failed' });
+      }
+    } catch (error) {
+      setErrors({ api: error.response?.data?.message || error.message });
+    }
   };
 
   return (
-    <div style={{
-      maxWidth: '400px',
-      margin: '40px auto',
-      padding: '30px',
-      boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-      borderRadius: '10px',
-      backgroundColor: '#fff',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', fontWeight: 'bold' }}>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              marginTop: '5px'
-            }}
-          />
-          {errors.email && <p style={{ color: 'red', fontSize: '0.875rem' }}>{errors.email}</p>}
-        </div>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6">
+        <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', fontWeight: 'bold' }}>Full Name</label>
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              marginTop: '5px'
-            }}
-          />
-          {errors.fullName && <p style={{ color: 'red', fontSize: '0.875rem' }}>{errors.fullName}</p>}
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border border-gray-300 p-2 rounded-md"
+            />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+          </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontWeight: 'bold' }}>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              marginTop: '5px'
-            }}
-          />
-          {errors.password && <p style={{ color: 'red', fontSize: '0.875rem' }}>{errors.password}</p>}
-        </div>
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              className="w-full border border-gray-300 p-2 rounded-md"
+            />
+            {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
+          </div>
 
-        <button
-          type="submit"
-          style={{
-            width: '100%',
-            padding: '12px',
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '6px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#007bff'}
-        >
-          Register
-        </button>
-      </form>
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full border border-gray-300 p-2 rounded-md"
+            />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+          </div>
 
-      {submitted && (
-        <p style={{
-          marginTop: '20px',
-          color: 'green',
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}>
-          Registration submitted successfully!
-        </p>
-      )}
+          {errors.api && (
+            <p className="text-red-600 font-medium text-sm mb-4">{errors.api}</p>
+          )}
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+          >
+            Register
+          </button>
+        </form>
+
+        {submitted && (
+          <p className="mt-4 text-green-600 text-center font-semibold">
+            Registration successful!
+          </p>
+        )}
+      </div>
     </div>
   );
 };

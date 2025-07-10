@@ -4,3 +4,6 @@ import { API_BASE_URL } from '../constants';
 
 export const userLogin = (credentials) =>
   axios.post(`${API_BASE_URL}/account/login`, credentials);
+
+export const userRegistration = (userRegistrationDetails) =>
+  axios.post(`${API_BASE_URL}/account/register`, userRegistrationDetails);
