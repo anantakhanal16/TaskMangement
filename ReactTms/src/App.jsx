@@ -1,28 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/home';
 import LoginForm from './components/Auth/LoginForm';
 import RegistrationForm from './components/Auth/RegistrationForm';
+import { AuthContext } from './context/AuthContext';
+import PrivateRoute from './context/PrivateRoute';
 
 const App = () => {
-  const [token, setToken] = useState(localStorage.getItem('token'));
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    setToken(storedToken);
-  }, []);
+  const { token, user } = useContext(AuthContext);
 
   return (
     <Routes>
       <Route
         path="/login"
-        element={!token ? <LoginForm onLogin={() => setToken(localStorage.getItem('token'))} /> : <Navigate to="/" replace />}
+        element={!token ? <LoginForm /> : <Navigate to="/" replace />}
       />
       <Route path="/register" element={<RegistrationForm />} />
 
       <Route
         path="/"
-        element={token ? <Home /> : <Navigate to="/login" replace />} />
+        element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 };

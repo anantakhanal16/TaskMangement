@@ -1,15 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 const TopNav = ({ user }) => {
+  const { logout } = useContext(AuthContext);
+
+
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false); // 👈 loading state
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const logout = () => {
-    localStorage.removeItem('token');
-  };
+
 
   const handleLogout = async () => {
     setLoading(true);
@@ -18,6 +20,7 @@ const TopNav = ({ user }) => {
       setLoading(false);
     }, 900);
     logout();
+
   };
 
   // Close dropdown when clicking outside
