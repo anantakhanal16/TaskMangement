@@ -3,7 +3,6 @@ import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserDetails } from '../services/authService';
 
-// Create the context
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -13,7 +12,6 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        debugger;
         const fetchUser = async () => {
             try {
                 const response = await getUserDetails();
@@ -36,28 +34,21 @@ export const AuthProvider = ({ children }) => {
         }
     }, [token]);
 
-
     const login = (token) => {
-        debugger;
         localStorage.setItem('token', token);
         setToken(token);
         const userData = getUserDetails();
         setUser(userData);
     };
 
-
     const logout = () => {
-        debugger;
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
         setTimeout(() => {
             navigate('/login');
-        }, 100); // Let the context state settle first
+        }, 100);
     };
-
-
-
 
     return (
         <AuthContext.Provider value={{ user, token, login, logout, loading }}>

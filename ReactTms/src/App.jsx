@@ -7,7 +7,7 @@ import { AuthContext } from './context/AuthContext';
 import PrivateRoute from './context/PrivateRoute';
 
 const App = () => {
-  const { token, user } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
   return (
     <Routes>
@@ -18,7 +18,7 @@ const App = () => {
       <Route path="/register" element={<RegistrationForm />} />
 
       <Route
-        path="/"
+       path="/"
         element={
           <PrivateRoute>
             <Home />

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { userRegistration } from '../../services/authService';
-import { Link, useNavigate } from 'react-router-dom';
-
+import React, { useState } from "react";
+import { userRegistration } from "../../services/authService";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    fullName: '',
+    email: "",
+    password: "",
+    fullName: "",
   });
+
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
@@ -20,30 +20,27 @@ const RegistrationForm = () => {
 
   const validate = () => {
     const errs = {};
-    if (!formData.email) errs.email = 'Email is required';
-    if (!formData.password) errs.password = 'Password is required';
-    if (!formData.fullName) errs.fullName = 'Full Name is required';
+    if (!formData.email) errs.email = "Email is required";
+    if (!formData.password) errs.password = "Password is required";
+    if (!formData.fullName) errs.fullName = "Full Name is required";
     return errs;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
     try {
       const response = await userRegistration(formData);
-      if (response.data.success) 
-        {
+      if (response.data.success) {
         setSubmitted(true);
         setErrors({});
-       setTimeout(() => navigate('/login'), 1000); 
+        setTimeout(() => navigate("/login"), 1000);
       } else {
-        setErrors({ api: response.data.message || 'Registration failed' });
+        setErrors({ api: response.data.message || "Registration failed" });
       }
     } catch (error) {
       setErrors({ api: error.response?.data?.message || error.message });
@@ -51,7 +48,7 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-400 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-600 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
 
@@ -65,7 +62,9 @@ const RegistrationForm = () => {
               onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded-md"
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
           </div>
 
           <div className="mb-4">
@@ -77,7 +76,9 @@ const RegistrationForm = () => {
               onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded-md"
             />
-            {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
+            {errors.fullName && (
+              <p className="text-red-500 text-sm">{errors.fullName}</p>
+            )}
           </div>
 
           <div className="mb-4">
@@ -89,11 +90,15 @@ const RegistrationForm = () => {
               onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded-md"
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
+            )}
           </div>
 
           {errors.api && (
-            <p className="text-red-600 font-medium text-sm mb-4">{errors.api}</p>
+            <p className="text-red-600 font-medium text-sm mb-4">
+              {errors.api}
+            </p>
           )}
 
           <button
@@ -102,14 +107,13 @@ const RegistrationForm = () => {
           >
             Register
           </button>
-       
-     <p className="mt-4 text-center text-sm">
-                    Already have account?{' '}
-                    <Link to="/Login" className="text-blue-600 hover:underline">
-                        Login
-                    </Link>
-                </p>
 
+          <p className="mt-4 text-center text-sm">
+            Already have account?{" "}
+            <Link to="/Login" className="text-blue-600 hover:underline">
+              Login
+            </Link>
+          </p>
         </form>
 
         {submitted && (
