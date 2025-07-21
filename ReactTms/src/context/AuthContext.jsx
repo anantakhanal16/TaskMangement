@@ -1,23 +1,26 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUserDetails } from '../services/authService';
+import { getUserDetails, userLogin, userLogout } from '../services/authService';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
+                debugger;
                 const response = await getUserDetails();
                 console.log("User Detail:", response.data.data);
                 if (response.data.success) {
+                    console.log("user details" + response.data.data)
                     setUser(response.data.data);
+                } else {
+                    logout();
                 }
             } catch (error) {
                 console.error("Failed to fetch user details:", error);
@@ -27,32 +30,46 @@ export const AuthProvider = ({ children }) => {
             }
         };
 
-        if (token) {
-            fetchUser();
-        } else {
-            setLoading(false);
+        fetchUser();
+    }, []);
+
+    const login = async (credentials) => {
+        try {
+            debugger;
+            const loginResponse = await userLogin(credentials);
+            if (loginResponse.data.success) {
+                const userResponse = await getUserDetails();
+                if (userResponse.data.success) {
+                    setUser(userResponse.data.data);
+                    navigate('/');
+                } else {
+                    console.error("Failed to fetch user details after login.");
+                }
+            } else {
+                console.error("Login API failed:", loginResponse.data.message);
+            }
+        } catch (error) {
+            console.error("Login error:", error);
         }
-    }, [token]);
 
-    const login = (token) => {
-        localStorage.setItem('token', token);
-        setToken(token);
-        const userData = getUserDetails();
-        setUser(userData);
-    };
+};
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
-        setTimeout(() => {
+const logout = async () => {
+    try {
+        debugger
+        const response = await userLogout();
+        if (response.data.success) {
+            setUser(null);
             navigate('/login');
-        }, 100);
-    };
+        }
+    } catch (error) {
+        console.error("Logout failed:", error);
+    }
+};
 
-    return (
-        <AuthContext.Provider value={{ user, token, login, logout, loading }}>
-            {children}
-        </AuthContext.Provider>
-    );
+return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+        {children}
+    </AuthContext.Provider>
+);
 };

@@ -7,13 +7,13 @@ import { AuthContext } from './context/AuthContext';
 import PrivateRoute from './context/PrivateRoute';
 
 const App = () => {
-  const { token } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return (
     <Routes>
       <Route
         path="/login"
-        element={!token ? <LoginForm /> : <Navigate to="/" replace />}
+        element={!user ? <LoginForm /> : <Navigate to="/" replace />}
       />
       <Route path="/register" element={<RegistrationForm />} />
 

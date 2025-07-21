@@ -1,11 +1,9 @@
 import React, { useState, useContext } from 'react';
-import { userLogin } from '../../services/authService';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
 const LoginForm = () => {
   const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,13 +13,7 @@ const LoginForm = () => {
     debugger;
     e.preventDefault();
     try {
-      const response = await userLogin({ email, password });
-      if (response.data.success) {
-        login(response.data.data.token); // Store token and fetch user
-        navigate('/'); // Go to home/dashboard
-      } else {
-        setError(response.data.message || 'Login failed');
-      }
+        await login({email,password})
     } catch (err) {
       setError(err.response?.data?.message || 'Server error');
     }

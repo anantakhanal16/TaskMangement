@@ -2,19 +2,21 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../constants';
 
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+});
+
 export const userLogin = (credentials) =>
-  axios.post(`${API_BASE_URL}/account/login`, credentials);
+  api.post('/account/login', credentials);
 
 export const userRegistration = (userRegistrationDetails) =>
-  axios.post(`${API_BASE_URL}/account/register`, userRegistrationDetails);
-
+  api.post('/account/register', userRegistrationDetails);
 
 export const getUserDetails = () => {
-  debugger;
-  const token = localStorage.getItem('token'); // 
-  return axios.get(`${API_BASE_URL}/account/getUserDetails`, {
-    headers: {
-      Authorization: `Bearer ${token}`, 
-    },
-  });
+  return api.get('/account/getUserDetails');
 };
+export const userLogout = () => {
+  return api.post('/account/logout');
+};
+
